@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VOCA - O seu Léxico Inglês</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200 transition-colors duration-300">
+
+    <div class="min-h-screen flex flex-col items-center justify-center p-4">
+        <header class="w-full max-w-4xl mx-auto flex justify-between items-center p-4">
+            <h1 class="text-2xl font-bold text-slate-800 dark:text-white">VOCA</h1>
+            <div class="flex items-center gap-4">
+                <!-- BOTÃO DE CONFIGURAÇÕES (NOVO) -->
+                <button id="settings-btn" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 0 2l-.15.08a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1 0-2l.15-.08a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+                <button id="theme-toggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                    <svg id="theme-icon-light" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sun hidden"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+                    <svg id="theme-icon-dark" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-moon"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+                </button>
+            </div>
+        </header>
+
+        <main class="w-full max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 p-4">
+            <!-- Coluna Esquerda: Ações -->
+            <div class="flex flex-col gap-6">
+                <div class="card bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg">
+                    <h2 class="text-lg font-semibold mb-2">Teste o seu Vocabulário</h2>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">Gere palavras aleatórias e adicione-as se as conhecer.</p>
+                    <div id="challenge-word-container" class="bg-slate-200 dark:bg-slate-700/50 min-h-[80px] flex items-center justify-center rounded-lg mb-4">
+                        <p id="challenge-word" class="text-2xl font-bold text-indigo-500 dark:text-indigo-400">Clique em "Iniciar" para começar</p>
+                    </div>
+                    <div id="challenge-buttons" class="flex gap-4">
+                        <button id="start-challenge-btn" class="w-full bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors btn-scale">Iniciar Teste</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coluna Direita: Status -->
+            <div class="flex flex-col gap-6">
+                <div class="card bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg text-center">
+                    <p id="level-title" class="text-sm font-medium text-indigo-500 dark:text-indigo-400">Novice</p>
+                    <p id="word-count" class="text-6xl font-extrabold my-2">0</p>
+                    <p class="text-sm text-slate-500 dark:text-slate-400">Total de Vocábulos</p>
+                    <p id="streak-count" class="text-sm text-green-500 mt-2">↑ 0 dia(s) de streak</p>
+                </div>
+                 <div class="card bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg">
+                     <button id="show-stories-btn" class="w-full bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold py-2 px-4 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors">Ver Mini-histórias 📚</button>
+                </div>
+                <div class="card bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg">
+                    <button id="show-stats-btn" class="w-full bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold py-2 px-4 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors">Ver Estatísticas 📈</button>
+                </div>
+                 <div class="card bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg">
+                    <button id="share-progress-btn" class="w-full bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold py-2 px-4 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors">Partilhar Progresso 🖼️</button>
+                </div>
+                <div class="card bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg">
+                    <button id="show-list-btn" class="w-full bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold py-2 px-4 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors">Ver Minha Lista</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- === MODAIS === -->
+
+    <!-- Modal Boas-Vindas -->
+    <div id="welcome-modal" class="modal-backdrop">
+        <div class="modal-card">
+            <h2 class="text-2xl font-bold mb-4">Bem-vindo(a) ao VOCA!</h2>
+            <p class="text-slate-600 dark:text-slate-300 mb-6">O seu objetivo é simples: descubra quantas palavras em inglês você conhece. Clique em "Iniciar Teste" para começar a sua jornada!</p>
+            <button id="close-welcome-modal-btn" class="w-full bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors">Começar!</button>
+        </div>
+    </div>
+    
+    <!-- Modal Subida de Nível -->
+    <div id="level-up-modal" class="modal-backdrop">
+        <div id="level-up-card" class="modal-card text-center">
+             <button id="close-level-up-modal-btn" class="absolute top-3 right-3 text-slate-500 hover:text-slate-800 dark:hover:text-white">✕</button>
+            <p class="text-sm text-yellow-500">NÍVEL ALCANÇADO!</p>
+            <h3 id="level-up-modal-title" class="text-3xl font-bold my-2">Apprentice</h3>
+        </div>
+    </div>
+
+    <!-- Modal Minha Lista -->
+    <div id="my-list-modal" class="modal-backdrop">
+        <div class="modal-card flex flex-col max-h-[80vh]">
+            <div class="flex justify-between items-center mb-4">
+                 <h3 class="text-xl font-bold">Minha Lista</h3>
+                 <button id="clear-list-btn-in-modal" class="text-sm text-red-500 hover:underline">Limpar Tudo</button>
+            </div>
+            <p id="empty-list-msg-in-modal" class="text-center text-slate-500 py-8 hidden">A sua lista de vocabulário está vazia.</p>
+            <ul id="word-list-in-modal" class="flex-1 overflow-y-auto space-y-1 pr-2">
+                <!-- Palavras serão injetadas aqui -->
+            </ul>
+            <button id="close-my-list-modal-btn" class="mt-6 w-full bg-slate-200 dark:bg-slate-700 py-2 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors">Fechar</button>
+        </div>
+    </div>
+    
+    <!-- Modal Detalhes da Palavra -->
+    <div id="word-details-modal" class="modal-backdrop">
+      <div class="modal-card relative">
+        <button id="close-modal-btn" class="absolute top-3 right-3 text-slate-500 hover:text-slate-800 dark:hover:text-white transition-colors">✕</button>
+        <div id="modal-spinner" class="modal-spinner"></div>
+        <div id="modal-content" class="hidden">
+          <h3 id="modal-word" class="text-2xl font-bold mb-2 capitalize"></h3>
+          <p class="text-slate-500 dark:text-slate-400 mb-1 text-sm font-semibold">Definição</p>
+          <p id="modal-definition" class="mb-4 text-slate-700 dark:text-slate-300"></p>
+          <p class="text-slate-500 dark:text-slate-400 mb-1 text-sm font-semibold">Exemplo</p>
+          <p id="modal-example" class="italic text-slate-700 dark:text-slate-300"></p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Modal Confirmação -->
+    <div id="confirm-modal" class="modal-backdrop">
+      <div class="modal-card text-center">
+        <h3 class="text-lg font-bold mb-2">Tem a certeza?</h3>
+        <p class="text-slate-600 dark:text-slate-300 mb-6">Esta ação é irreversível e irá limpar todo o seu progresso.</p>
+        <div class="flex gap-4">
+          <button id="confirm-cancel-btn" class="flex-1 bg-slate-200 dark:bg-slate-700 py-2 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+          <button id="confirm-delete-btn" class="flex-1 bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 transition-colors">Sim, limpar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Conquista -->
+    <div id="achievement-modal" class="modal-backdrop">
+        <div id="achievement-card" class="modal-card text-center relative">
+            <button id="close-achievement-modal-btn" class="absolute top-3 right-3 text-slate-500 hover:text-slate-800 dark:hover:text-white">✕</button>
+            <div id="achievement-icon" class="mx-auto mb-4 text-yellow-400">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trophy mx-auto"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.87 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.13 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+            </div>
+            <p class="text-slate-500 dark:text-slate-400 text-sm">CONQUISTA DESBLOQUEADA!</p>
+            <p id="achievement-modal-text" class="text-xl font-semibold mt-1"></p>
+        </div>
+    </div>
+
+    <!-- Modal Estatísticas -->
+    <div id="stats-modal" class="modal-backdrop">
+        <div class="modal-card w-full max-w-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold">As suas Estatísticas</h3>
+                <button id="close-stats-modal-btn" class="text-slate-500 hover:text-slate-800 dark:hover:text-white">✕</button>
+            </div>
+            <div class="space-y-6">
+                <div>
+                    <div class="flex justify-center gap-2 mb-4">
+                        <button data-period="7" class="stats-period-btn text-sm px-3 py-1 rounded-full">7 dias</button>
+                        <button data-period="30" class="stats-period-btn text-sm px-3 py-1 rounded-full active">30 dias</button>
+                        <button data-period="90" class="stats-period-btn text-sm px-3 py-1 rounded-full">90 dias</button>
+                    </div>
+                    <canvas id="daily-learned-chart"></canvas>
+                </div>
+                 <div>
+                    <h4 class="text-lg font-semibold text-center mb-2">Distribuição por Categoria</h4>
+                    <div class="max-w-xs mx-auto">
+                        <canvas id="category-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Mini-histórias -->
+    <div id="stories-modal" class="modal-backdrop">
+        <div class="modal-card w-full max-w-2xl">
+             <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold">Mini-histórias Desbloqueáveis</h3>
+                <button id="close-stories-modal-btn" class="text-slate-500 hover:text-slate-800 dark:hover:text-white">✕</button>
+            </div>
+            <div id="stories-container" class="space-y-4 max-h-[60vh] overflow-y-auto p-1">
+                <!-- As histórias serão injetadas aqui -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- MODAL DE CONFIGURAÇÕES (NOVO) -->
+    <div id="settings-modal" class="modal-backdrop">
+        <div class="modal-card w-full max-w-lg">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold">Configurações</h3>
+                <button id="close-settings-modal-btn" class="text-slate-500 hover:text-slate-800 dark:hover:text-white">✕</button>
+            </div>
+            <div class="space-y-6">
+                <div>
+                    <label for="nickname-input" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Apelido</label>
+                    <input type="text" id="nickname-input" placeholder="O seu apelido..." class="w-full bg-slate-200 dark:bg-slate-700 border-transparent rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Avatar</label>
+                    <div id="avatar-selection-grid" class="grid grid-cols-4 sm:grid-cols-6 gap-4">
+                        <!-- Avatares serão injetados aqui -->
+                    </div>
+                </div>
+                 <div>
+                    <button id="save-settings-btn" class="w-full bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors">Guardar Alterações</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cartão de Partilha (escondido) -->
+    <div id="share-card-container" class="fixed top-0 left-[-9999px] p-8">
+        <div id="share-card" class="p-8 bg-indigo-600 text-white rounded-2xl w-96 shadow-2xl font-sans">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-3xl font-bold">VOCA</h2>
+                <span class="text-lg font-semibold bg-white/20 px-3 py-1 rounded-full" id="share-level">Novice</span>
+            </div>
+            <p class="text-lg mb-6">O meu progresso de aprendizagem de inglês!</p>
+            <div class="grid grid-cols-2 gap-4 text-center">
+                <div>
+                    <p class="text-4xl font-extrabold" id="share-word-count">0</p>
+                    <p class="text-sm opacity-80">Palavras Aprendidas</p>
+                </div>
+                <div>
+                    <p class="text-4xl font-extrabold" id="share-streak-count">0</p>
+                    <p class="text-sm opacity-80">Dias de Streak 🔥</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
+

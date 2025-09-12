@@ -1,0 +1,130 @@
+/* Estilos baseados em Tailwind, mas com algumas personalizações */
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.modal-backdrop.active {
+    pointer-events: auto;
+}
+
+.modal-card {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    width: 90%;
+    max-width: 500px;
+}
+
+.dark .modal-card {
+    background-color: #1e293b; /* slate-800 */
+}
+
+/* Spinner para carregamento de definições */
+.modal-spinner {
+    width: 2rem;
+    height: 2rem;
+    border: 3px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #4f46e5; /* indigo-600 */
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 2rem auto;
+}
+
+.dark .modal-spinner {
+    border-left-color: #818cf8; /* indigo-400 */
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.btn-scale {
+    transition: transform 0.1s ease-in-out;
+}
+.btn-scale:active {
+    transform: scale(0.97);
+}
+
+
+/* Estilos para o seletor de período das estatísticas */
+.stats-period-btn {
+    background-color: #e2e8f0; /* slate-200 */
+    color: #475569; /* slate-600 */
+    transition: all 0.2s ease-in-out;
+}
+.dark .stats-period-btn {
+     background-color: #334155; /* slate-700 */
+     color: #cbd5e1; /* slate-300 */
+}
+.stats-period-btn.active {
+    background-color: #4f46e5; /* indigo-600 */
+    color: white;
+    font-weight: 600;
+}
+.dark .stats-period-btn.active {
+    background-color: #818cf8; /* indigo-400 */
+    color: #1e293b;
+}
+
+
+/* Estilos para a lista de palavras no modal */
+#word-list-in-modal li {
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#word-list-in-modal li:hover {
+    background-color: #f1f5f9; /* slate-100 */
+}
+
+.dark #word-list-in-modal li:hover {
+    background-color: #334155; /* slate-700 */
+}
+
+/* ESTILOS PARA PERSONALIZAÇÃO (NOVOS) */
+.avatar-item {
+    cursor: pointer;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    transition: all 0.2s ease-in-out;
+    width: 56px; /* 14 * 4 */
+    height: 56px; /* 14 * 4 */
+}
+
+.avatar-item:hover {
+    transform: scale(1.05);
+    border-color: #9ca3af; /* gray-400 */
+}
+.dark .avatar-item:hover {
+    border-color: #6b7280; /* gray-500 */
+}
+
+.avatar-item.selected {
+    border-color: #4f46e5; /* indigo-600 */
+    transform: scale(1.1);
+}
+
+.dark .avatar-item.selected {
+    border-color: #818cf8; /* indigo-400 */
+}
+
