@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt" class="dark">
+<html lang="pt" class="">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -31,7 +31,6 @@
         <header class="w-full max-w-4xl mx-auto flex justify-between items-center p-4">
             <h1 class="text-2xl font-bold text-slate-800 dark:text-white">VOCA</h1>
             <div class="flex items-center gap-4">
-                <!-- BOTÃO DE CONFIGURAÇÕES (NOVO) -->
                 <button id="settings-btn" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 0 2l-.15.08a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1 0-2l.15-.08a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
                 </button>
@@ -57,7 +56,7 @@
                 </div>
             </div>
 
-            <!-- Coluna Direita: Status -->
+            <!-- Coluna Direita: Status e Ações Secundárias -->
             <div class="flex flex-col gap-6">
                 <div class="card bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg text-center">
                     <p id="level-title" class="text-sm font-medium text-indigo-500 dark:text-indigo-400">Novice</p>
@@ -65,17 +64,11 @@
                     <p class="text-sm text-slate-500 dark:text-slate-400">Total de Vocábulos</p>
                     <p id="streak-count" class="text-sm text-green-500 mt-2">↑ 0 dia(s) de streak</p>
                 </div>
-                 <div class="card bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg">
-                     <button id="show-stories-btn" class="w-full bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold py-2 px-4 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors">Ver Mini-histórias 📚</button>
-                </div>
-                <div class="card bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg">
-                    <button id="show-stats-btn" class="w-full bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold py-2 px-4 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors">Ver Estatísticas 📈</button>
-                </div>
-                 <div class="card bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg">
-                    <button id="share-progress-btn" class="w-full bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold py-2 px-4 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors">Partilhar Progresso 🖼️</button>
-                </div>
-                <div class="card bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg">
-                    <button id="show-list-btn" class="w-full bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold py-2 px-4 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors">Ver Minha Lista</button>
+                 <div class="card bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg grid grid-cols-2 gap-4">
+                    <button id="show-list-btn" class="w-full bg-slate-200 dark:bg-slate-700 font-semibold py-2 px-4 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors">Ver Lista</button>
+                    <button id="show-stats-btn" class="w-full bg-slate-200 dark:bg-slate-700 font-semibold py-2 px-4 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors">Estatísticas</button>
+                    <button id="show-stories-btn" class="w-full bg-slate-200 dark:bg-slate-700 font-semibold py-2 px-4 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors">Histórias 📚</button>
+                    <button id="share-progress-btn" class="w-full bg-slate-200 dark:bg-slate-700 font-semibold py-2 px-4 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors">Partilhar 🖼️</button>
                 </div>
             </div>
         </main>
@@ -109,9 +102,7 @@
                  <button id="clear-list-btn-in-modal" class="text-sm text-red-500 hover:underline">Limpar Tudo</button>
             </div>
             <p id="empty-list-msg-in-modal" class="text-center text-slate-500 py-8 hidden">A sua lista de vocabulário está vazia.</p>
-            <ul id="word-list-in-modal" class="flex-1 overflow-y-auto space-y-1 pr-2">
-                <!-- Palavras serão injetadas aqui -->
-            </ul>
+            <ul id="word-list-in-modal" class="flex-1 overflow-y-auto space-y-1 pr-2"></ul>
             <button id="close-my-list-modal-btn" class="mt-6 w-full bg-slate-200 dark:bg-slate-700 py-2 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors">Fechar</button>
         </div>
     </div>
@@ -157,23 +148,34 @@
 
     <!-- Modal Estatísticas -->
     <div id="stats-modal" class="modal-backdrop">
-        <div class="modal-card w-full max-w-2xl">
+        <div class="modal-card max-w-3xl w-full">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-xl font-bold">As suas Estatísticas</h3>
                 <button id="close-stats-modal-btn" class="text-slate-500 hover:text-slate-800 dark:hover:text-white">✕</button>
             </div>
             <div class="space-y-6">
+                <!-- Gráfico Diário -->
                 <div>
-                    <div class="flex justify-center gap-2 mb-4">
-                        <button data-period="7" class="stats-period-btn text-sm px-3 py-1 rounded-full">7 dias</button>
-                        <button data-period="30" class="stats-period-btn text-sm px-3 py-1 rounded-full active">30 dias</button>
-                        <button data-period="90" class="stats-period-btn text-sm px-3 py-1 rounded-full">90 dias</button>
+                    <div class="flex justify-between items-center mb-2">
+                        <h4 class="font-semibold">Palavras Aprendidas por Dia</h4>
+                        <div id="stats-period-selector" class="flex gap-1 bg-slate-200 dark:bg-slate-700 p-1 rounded-lg">
+                            <button class="stats-period-btn" data-period="7">7d</button>
+                            <button class="stats-period-btn active" data-period="30">30d</button>
+                            <button class="stats-period-btn" data-period="90">90d</button>
+                        </div>
                     </div>
-                    <canvas id="daily-learned-chart"></canvas>
+                    <!-- CORRIGIDO: Adicionado o parágrafo de loading -->
+                    <p id="stats-loading-msg" class="text-center text-slate-500 py-8">A carregar estatísticas...</p>
+                    <div class="h-64 relative">
+                        <canvas id="daily-learned-chart"></canvas>
+                    </div>
                 </div>
-                 <div>
-                    <h4 class="text-lg font-semibold text-center mb-2">Distribuição por Categoria</h4>
-                    <div class="max-w-xs mx-auto">
+                <!-- Gráfico de Categorias -->
+                <div>
+                    <h4 class="font-semibold mb-2">Distribuição por Categoria</h4>
+                    <!-- CORRIGIDO: Adicionado o parágrafo de loading -->
+                    <p id="category-stats-loading-msg" class="text-center text-slate-500 py-8">A carregar estatísticas...</p>
+                    <div class="h-64 relative">
                         <canvas id="category-chart"></canvas>
                     </div>
                 </div>
@@ -181,22 +183,20 @@
         </div>
     </div>
 
-    <!-- Modal Mini-histórias -->
+    <!-- Modal Histórias -->
     <div id="stories-modal" class="modal-backdrop">
-        <div class="modal-card w-full max-w-2xl">
-             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold">Mini-histórias Desbloqueáveis</h3>
+        <div class="modal-card max-w-2xl w-full">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold">Mini-histórias Desbloqueadas</h3>
                 <button id="close-stories-modal-btn" class="text-slate-500 hover:text-slate-800 dark:hover:text-white">✕</button>
             </div>
-            <div id="stories-container" class="space-y-4 max-h-[60vh] overflow-y-auto p-1">
-                <!-- As histórias serão injetadas aqui -->
-            </div>
+            <div id="stories-container" class="space-y-4 max-h-[60vh] overflow-y-auto pr-2"></div>
         </div>
     </div>
     
-    <!-- MODAL DE CONFIGURAÇÕES (NOVO) -->
+    <!-- Modal Configurações -->
     <div id="settings-modal" class="modal-backdrop">
-        <div class="modal-card w-full max-w-lg">
+        <div class="modal-card">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-xl font-bold">Configurações</h3>
                 <button id="close-settings-modal-btn" class="text-slate-500 hover:text-slate-800 dark:hover:text-white">✕</button>
@@ -204,42 +204,44 @@
             <div class="space-y-6">
                 <div>
                     <label for="nickname-input" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Apelido</label>
-                    <input type="text" id="nickname-input" placeholder="O seu apelido..." class="w-full bg-slate-200 dark:bg-slate-700 border-transparent rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <input type="text" id="nickname-input" class="w-full bg-slate-200 dark:bg-slate-700 border-transparent rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Avatar</label>
-                    <div id="avatar-selection-grid" class="grid grid-cols-4 sm:grid-cols-6 gap-4">
-                        <!-- Avatares serão injetados aqui -->
+                    <div id="avatar-selection-grid" class="grid grid-cols-6 gap-2">
+                        <!-- Avatares são injetados aqui -->
                     </div>
                 </div>
-                 <div>
-                    <button id="save-settings-btn" class="w-full bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors">Guardar Alterações</button>
-                </div>
             </div>
+            <button id="save-settings-btn" class="mt-8 w-full bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors">Guardar Alterações</button>
         </div>
     </div>
 
-    <!-- Cartão de Partilha (escondido) -->
-    <div id="share-card-container" class="fixed top-0 left-[-9999px] p-8">
-        <div id="share-card" class="p-8 bg-indigo-600 text-white rounded-2xl w-96 shadow-2xl font-sans">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-3xl font-bold">VOCA</h2>
-                <span class="text-lg font-semibold bg-white/20 px-3 py-1 rounded-full" id="share-level">Novice</span>
-            </div>
-            <p class="text-lg mb-6">O meu progresso de aprendizagem de inglês!</p>
-            <div class="grid grid-cols-2 gap-4 text-center">
+    <!-- Container para o Cartão de Partilha (fora do ecrã) -->
+    <!-- CORRIGIDO: Posicionado fora do ecrã e com os elementos em falta -->
+    <div id="share-card-container" class="fixed top-0 -left-[9999px] p-4">
+        <div id="share-card" class="w-[350px] bg-slate-800 text-white p-6 rounded-2xl shadow-2xl flex flex-col items-center text-center font-sans">
+            <img id="share-avatar" src="" alt="Avatar" class="w-20 h-20 rounded-full border-4 border-white mb-3">
+            <p id="share-nickname" class="text-2xl font-bold">WordMaster</p>
+            <p class="text-sm text-slate-300 mb-6">O meu progresso no VOCA!</p>
+            <div class="w-full flex justify-around">
                 <div>
-                    <p class="text-4xl font-extrabold" id="share-word-count">0</p>
-                    <p class="text-sm opacity-80">Palavras Aprendidas</p>
+                    <p class="text-3xl font-extrabold" id="share-word-count">0</p>
+                    <p class="text-xs text-slate-400">PALAVRAS</p>
                 </div>
                 <div>
-                    <p class="text-4xl font-extrabold" id="share-streak-count">0</p>
-                    <p class="text-sm opacity-80">Dias de Streak 🔥</p>
+                    <p class="text-3xl font-extrabold" id="share-streak-count">0</p>
+                    <p class="text-xs text-slate-400">STREAK</p>
+                </div>
+                <div>
+                    <p class="text-3xl font-extrabold" id="share-level">Novice</p>
+                    <p class="text-xs text-slate-400">NÍVEL</p>
                 </div>
             </div>
+            <p class="mt-6 text-xs text-indigo-400 font-semibold">Junte-se à jornada VOCA!</p>
         </div>
     </div>
-    
+
     <script src="script.js"></script>
 </body>
 </html>

@@ -14,8 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const raw = localStorage.getItem(key);
             return raw ? JSON.parse(raw) : fallback;
-        } catch (err)
-        {
+        } catch (err) {
             console.warn(`Falha ao analisar a chave do localStorage "${key}"`, err);
             localStorage.removeItem(key);
             return fallback;
@@ -134,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let selectedAvatar = userProfile.avatar;
 
     // =================================================================================
-    // ELEMENTOS DO DOM
+    // ELEMENTOS DO DOM (CORRIGIDO E SINCRONIZADO COM O HTML)
     // =================================================================================
 
     const elements = {
@@ -198,13 +197,14 @@ document.addEventListener('DOMContentLoaded', () => {
         categoryStatsLoadingMsg: $('category-stats-loading-msg'),
 
         // Partilha
-        generateShareCardBtn: $('generate-share-card-btn'),
-        shareCardTemplate: $('share-card-template'),
-        shareCardWords: $('share-card-words'),
-        shareCardStreak: $('share-card-streak'),
-        shareCardLevel: $('share-card-level'),
-        shareCardNickname: $('share-nickname'),
-        shareCardAvatar: $('share-avatar'),
+        shareProgressBtn: $('share-progress-btn'),
+        shareCardContainer: $('share-card-container'),
+        shareCard: $('share-card'),
+        shareAvatar: $('share-avatar'),
+        shareNickname: $('share-nickname'),
+        shareWordCount: $('share-word-count'),
+        shareStreakCount: $('share-streak-count'),
+        shareLevel: $('share-level'),
 
         // Configurações
         nicknameInput: $('nickname-input'),
@@ -483,8 +483,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const renderDailyChart = (days = 30) => {
-        elements.statsLoadingMsg.classList.add('hidden');
-        elements.dailyLearnedChartCanvas.classList.remove('hidden');
+        if (elements.statsLoadingMsg) elements.statsLoadingMsg.classList.add('hidden');
+        if (elements.dailyLearnedChartCanvas) elements.dailyLearnedChartCanvas.classList.remove('hidden');
         
         const dailyData = aggregateDailyLearned(vocaEvents, days);
         const isDark = document.documentElement.classList.contains('dark');
@@ -514,20 +514,22 @@ document.addEventListener('DOMContentLoaded', () => {
         if (dailyChartInstance) {
             dailyChartInstance.destroy();
         }
-        dailyChartInstance = new Chart(elements.dailyLearnedChartCanvas.getContext('2d'), {
-            type: 'line',
-            data: chartData,
-            options: chartOptions,
-        });
+        if (elements.dailyLearnedChartCanvas) {
+            dailyChartInstance = new Chart(elements.dailyLearnedChartCanvas.getContext('2d'), {
+                type: 'line',
+                data: chartData,
+                options: chartOptions,
+            });
+        }
 
         document.querySelectorAll('.stats-period-btn').forEach(btn => {
-            btn.classList.toggle('active', parseInt(btn.dataset.days) === days);
+            btn.classList.toggle('active', parseInt(btn.dataset.period) === days);
         });
     };
 
     const renderCategoryChart = () => {
-        elements.categoryStatsLoadingMsg.classList.add('hidden');
-        elements.categoryChartCanvas.classList.remove('hidden');
+        if (elements.categoryStatsLoadingMsg) elements.categoryStatsLoadingMsg.classList.add('hidden');
+        if (elements.categoryChartCanvas) elements.categoryChartCanvas.classList.remove('hidden');
 
         const categoryData = aggregateCategoryDistribution(vocaEvents);
         const isDark = document.documentElement.classList.contains('dark');
@@ -561,19 +563,21 @@ document.addEventListener('DOMContentLoaded', () => {
         if (categoryChartInstance) {
             categoryChartInstance.destroy();
         }
-        categoryChartInstance = new Chart(elements.categoryChartCanvas.getContext('2d'), {
-            type: 'doughnut',
-            data: chartData,
-            options: chartOptions,
-        });
+        if (elements.categoryChartCanvas) {
+            categoryChartInstance = new Chart(elements.categoryChartCanvas.getContext('2d'), {
+                type: 'doughnut',
+                data: chartData,
+                options: chartOptions,
+            });
+        }
     };
 
     const showStatsModal = () => {
         openModal(elements.statsModal);
-        elements.dailyLearnedChartCanvas.classList.add('hidden');
-        elements.statsLoadingMsg.classList.remove('hidden');
-        elements.categoryChartCanvas.classList.add('hidden');
-        elements.categoryStatsLoadingMsg.classList.remove('hidden');
+        if (elements.dailyLearnedChartCanvas) elements.dailyLearnedChartCanvas.classList.add('hidden');
+        if (elements.statsLoadingMsg) elements.statsLoadingMsg.classList.remove('hidden');
+        if (elements.categoryChartCanvas) elements.categoryChartCanvas.classList.add('hidden');
+        if (elements.categoryStatsLoadingMsg) elements.categoryStatsLoadingMsg.classList.remove('hidden');
         
         setTimeout(() => {
             renderDailyChart(30);
@@ -586,18 +590,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const streak = gameState.streak;
         const level = levels.slice().reverse().find(l => wordCount >= l.threshold)?.name || 'Novice';
 
-        elements.shareCardNickname.textContent = userProfile.nickname;
-        elements.shareCardAvatar.src = `https://storage.googleapis.com/gemini-prod-us-west1-assets/avatars/${userProfile.avatar}`;
-        elements.shareCardWords.textContent = wordCount;
-        elements.shareCardStreak.textContent = streak;
-        elements.shareCardLevel.textContent = level;
+        if (elements.shareNickname) elements.shareNickname.textContent = userProfile.nickname;
+        if (elements.shareAvatar) elements.shareAvatar.src = `https://storage.googleapis.com/gemini-prod-us-west1-assets/avatars/${userProfile.avatar}`;
+        if (elements.shareWordCount) elements.shareWordCount.textContent = wordCount;
+        if (elements.shareStreakCount) elements.shareStreakCount.textContent = streak;
+        if (elements.shareLevel) elements.shareLevel.textContent = level;
 
-        html2canvas(elements.shareCardTemplate).then(canvas => {
-            const link = document.createElement('a');
-            link.download = 'meu-progresso-voca.png';
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-        });
+        if (elements.shareCard) {
+            html2canvas(elements.shareCard).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'meu-progresso-voca.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }).catch(err => console.error('Erro ao gerar imagem:', err));
+        }
     };
 
     const populateAndShowSettingsModal = () => {
@@ -668,7 +674,7 @@ document.addEventListener('DOMContentLoaded', () => {
     safeOn(elements.showListBtn, 'click', populateAndShowWordList);
     safeOn(elements.showStatsBtn, 'click', showStatsModal);
     safeOn(elements.showStoriesBtn, 'click', populateAndShowStoriesModal);
-    safeOn(elements.generateShareCardBtn, 'click', generateShareCard);
+    safeOn(elements.shareProgressBtn, 'click', generateShareCard);
     safeOn(elements.settingsBtn, 'click', populateAndShowSettingsModal);
 
     // Event Listeners para Modais
@@ -682,7 +688,7 @@ document.addEventListener('DOMContentLoaded', () => {
     safeOn(elements.closeSettingsModalBtn, 'click', () => closeModal(elements.settingsModal));
     safeOn(elements.saveSettingsBtn, 'click', handleSaveSettings);
     safeOn(elements.avatarSelectionGrid, 'click', handleAvatarSelection);
-    safeOn(elements.confirmCancelBtn, 'click', () => { // CORRIGIDO
+    safeOn(elements.confirmCancelBtn, 'click', () => { 
         closeModal(elements.confirmModal);
         setTimeout(populateAndShowWordList, 450);
     });
@@ -710,7 +716,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     safeOn(elements.statsPeriodSelector, 'click', (e) => {
         if(e.target.classList.contains('stats-period-btn')) {
-            const days = parseInt(e.target.dataset.days);
+            const days = parseInt(e.target.dataset.period);
             renderDailyChart(days);
         }
     });
