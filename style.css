@@ -1,8 +1,22 @@
-/* Estilos baseados em Tailwind, mas com algumas personalizações */
+:root {
+    --toast-progress-bar: linear-gradient(to right, #4f46e5, #818cf8);
+}
+
 body {
     font-family: 'Inter', sans-serif;
 }
 
+.card {
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.btn-scale:active {
+    transform: scale(0.95);
+    transition: transform 0.1s;
+}
+
+/* Estilos para Modais */
 .modal-backdrop {
     position: fixed;
     top: 0;
@@ -13,18 +27,19 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 50;
     opacity: 0;
     pointer-events: none;
+    z-index: 50;
 }
 
 .modal-backdrop.active {
+    opacity: 1;
     pointer-events: auto;
 }
 
 .modal-card {
     background-color: white;
-    padding: 1.5rem;
+    padding: 2rem;
     border-radius: 1rem;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     width: 90%;
@@ -35,96 +50,148 @@ body {
     background-color: #1e293b; /* slate-800 */
 }
 
-/* Spinner para carregamento de definições */
-.modal-spinner {
-    width: 2rem;
-    height: 2rem;
-    border: 3px solid rgba(0, 0, 0, 0.1);
-    border-left-color: #4f46e5; /* indigo-600 */
+/* Animação de "IA a pensar" */
+.gemini-thinking-animation {
+    display: flex;
+    gap: 0.5rem;
+}
+.gemini-thinking-animation .dot {
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin: 2rem auto;
+    background-color: #4f46e5; /* indigo-600 */
+    animation: bounce 1.4s infinite ease-in-out both;
+}
+.gemini-thinking-animation .dot1 { animation-delay: -0.32s; }
+.gemini-thinking-animation .dot2 { animation-delay: -0.16s; }
+@keyframes bounce {
+    0%, 80%, 100% { transform: scale(0); }
+    40% { transform: scale(1.0); }
 }
 
-.dark .modal-spinner {
-    border-left-color: #818cf8; /* indigo-400 */
-}
-
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-.btn-scale {
-    transition: transform 0.1s ease-in-out;
-}
-.btn-scale:active {
-    transform: scale(0.97);
-}
-
-
-/* Estilos para o seletor de período das estatísticas */
-.stats-period-btn {
-    background-color: #e2e8f0; /* slate-200 */
-    color: #475569; /* slate-600 */
+/* Estilos para o novo fluxo de interação com a IA */
+.gemini-interaction-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
     transition: all 0.2s ease-in-out;
+    background-color: #f1f5f9; /* slate-100 */
+    border: 1px solid #e2e8f0; /* slate-200 */
 }
-.dark .stats-period-btn {
-     background-color: #334155; /* slate-700 */
-     color: #cbd5e1; /* slate-300 */
+.dark .gemini-interaction-item {
+    background-color: #334155; /* slate-700 */
+    border-color: #475569; /* slate-600 */
+}
+
+.gemini-interaction-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+    background-color: #e2e8f0; /* slate-200 */
+}
+.dark .gemini-interaction-item:hover {
+    background-color: #475569; /* slate-600 */
+}
+
+.gemini-interaction-item svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: #64748b; /* slate-500 */
+}
+.dark .gemini-interaction-item svg {
+    color: #94a3b8; /* slate-400 */
+}
+
+/* Estilos para o conteúdo do modal de detalhe da IA */
+.gemini-detail-content .english-example {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+.gemini-detail-content .portuguese-translation {
+    display: block;
+    font-size: 0.875rem;
+    color: #64748b; /* slate-500 */
+}
+.dark .gemini-detail-content .portuguese-translation {
+    color: #94a3b8; /* slate-400 */
+}
+.gemini-detail-content ul {
+    list-style: none;
+    padding: 0;
+}
+.gemini-detail-content li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e2e8f0; /* slate-200 */
+}
+.dark .gemini-detail-content li {
+    border-color: #334155; /* slate-700 */
+}
+.gemini-detail-content li:last-child {
+    border-bottom: none;
+}
+
+/* Estilos para Modais de Celebração */
+.celebration-icon svg {
+    width: 4rem; /* w-16 */
+    height: 4rem; /* h-16 */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#level-up-icon svg {
+    color: #818cf8; /* indigo-400 */
+}
+
+#achievement-icon svg {
+     color: #f59e0b; /* yellow-500 */
+}
+
+
+/* Estilos para Estatísticas */
+.stats-period-btn {
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s;
 }
 .stats-period-btn.active {
-    background-color: #4f46e5; /* indigo-600 */
+    background-color: #4f46e5;
     color: white;
-    font-weight: 600;
 }
 .dark .stats-period-btn.active {
-    background-color: #818cf8; /* indigo-400 */
-    color: #1e293b;
+    background-color: #6366f1;
 }
 
-
-/* Estilos para a lista de palavras no modal */
-#word-list-in-modal li {
-    padding: 0.5rem 0.75rem;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-#word-list-in-modal li:hover {
-    background-color: #f1f5f9; /* slate-100 */
-}
-
-.dark #word-list-in-modal li:hover {
-    background-color: #334155; /* slate-700 */
-}
-
-/* ESTILOS PARA PERSONALIZAÇÃO (NOVOS) */
+/* Estilos para Configurações */
 .avatar-item {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 9999px;
     cursor: pointer;
-    border-radius: 50%;
     border: 3px solid transparent;
     transition: all 0.2s ease-in-out;
-    width: 56px; /* 14 * 4 */
-    height: 56px; /* 14 * 4 */
+    object-fit: cover;
 }
-
 .avatar-item:hover {
     transform: scale(1.05);
-    border-color: #9ca3af; /* gray-400 */
+    border-color: #a5b4fc; /* indigo-300 */
 }
-.dark .avatar-item:hover {
-    border-color: #6b7280; /* gray-500 */
-}
-
 .avatar-item.selected {
     border-color: #4f46e5; /* indigo-600 */
     transform: scale(1.1);
 }
-
 .dark .avatar-item.selected {
     border-color: #818cf8; /* indigo-400 */
+}
+
+/* Estilos para Cartão de Partilha */
+.share-card-gradient {
+    background-image: linear-gradient(to top right, #4338ca, #6d28d9);
 }
 
