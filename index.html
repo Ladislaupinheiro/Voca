@@ -11,6 +11,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+     <script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css"/>
+
     <link rel="stylesheet" href="style.css">
     <script>
         tailwind.config = {
@@ -26,8 +29,8 @@
     </script>
 </head>
 <body class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200 transition-colors duration-300">
-<body class="bg-slate-100 dark:bg-slate-900 ...">
-    <div id="highlight-overlay" class="highlight-overlay"></div> <div class="min-h-screen flex flex-col ...">
+    <div id="highlight-overlay" class="highlight-overlay"></div>
+
     <div class="min-h-screen flex flex-col items-center justify-center p-4">
         <header class="w-full max-w-4xl mx-auto flex justify-between items-center p-4">
             <h1 class="text-2xl font-bold text-slate-800 dark:text-white">VOCA</h1>
@@ -45,13 +48,15 @@
         <main class="w-full max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 p-4">
             <div class="flex flex-col gap-6">
                 <div class="card bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg">
-                    <h2 class="text-lg font-semibold mb-2">Teste o seu Vocabulário</h2>
-                    <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">Gere palavras aleatórias e adicione-as se as conhecer.</p>
+                    <h2 class="text-lg font-semibold mb-2">A Aventura Começa Aqui!</h2>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">Vamos descobrir uma nova palavra? Toque em 'Explorar' e adicione-a ao seu mapa do tesouro!</p>
                     <div id="challenge-word-container" class="bg-slate-200 dark:bg-slate-700/50 min-h-[80px] flex items-center justify-center rounded-lg mb-4">
-                        <p id="challenge-word" class="text-2xl font-bold text-indigo-500 dark:text-indigo-400">Clique em "Iniciar" para começar</p>
+                        <p id="challenge-word" class="text-2xl font-bold text-indigo-500 dark:text-indigo-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-compass text-slate-400 dark:text-slate-500"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+                        </p>
                     </div>
                     <div id="challenge-buttons" class="flex gap-4">
-                        <button id="start-challenge-btn" class="w-full bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors btn-scale">Iniciar Teste</button>
+                        <button id="start-challenge-btn" class="w-full bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors btn-scale">Explorar Palavra 🗺️</button>
                     </div>
                 </div>
             </div>
@@ -61,6 +66,7 @@
                     <p id="level-title" class="text-sm font-medium text-indigo-500 dark:text-indigo-400">Novice</p>
                     <p id="word-count" class="text-6xl font-extrabold my-2">0</p>
                     <p class="text-sm text-slate-500 dark:text-slate-400">Total de Vocábulos</p>
+                    <p id="xp-bar-text" class="text-xs text-slate-500 dark:text-slate-400 mt-1">0 / 50</p>
                     <p id="streak-count" class="text-sm text-green-500 mt-2">↑ 0 dia(s) de streak</p>
                 </div>
                  <div class="card bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg grid grid-cols-2 gap-4">
@@ -75,12 +81,9 @@
 
     <div id="onboarding-modal" class="modal-backdrop">
         <div class="modal-card max-w-md w-full relative overflow-hidden">
-            <div id="onboarding-steps" class="flex transition-transform duration-300 ease-in-out">
-                </div>
-    
+            <div id="onboarding-steps" class="flex transition-transform duration-300 ease-in-out"></div>
             <div class="mt-8 flex justify-between items-center">
-                <div id="onboarding-dots" class="flex gap-2">
-                    </div>
+                <div id="onboarding-dots" class="flex gap-2"></div>
                 <div class="flex gap-4">
                     <button id="onboarding-prev" class="bg-slate-200 dark:bg-slate-700 font-semibold py-2 px-4 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors">Anterior</button>
                     <button id="onboarding-next" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors">Próximo</button>
@@ -88,7 +91,6 @@
             </div>
         </div>
     </div>
-    
     <div id="gemini-interaction-modal" class="modal-backdrop">
         <div class="modal-card max-w-lg w-full">
             <div id="gemini-interaction-loading" class="flex flex-col items-center justify-center text-center">
@@ -106,7 +108,6 @@
             </div>
         </div>
     </div>
-
     <div id="gemini-detail-modal" class="modal-backdrop">
         <div class="modal-card max-w-md w-full">
             <div class="flex justify-between items-center mb-4">
@@ -116,7 +117,6 @@
             <div id="gemini-detail-content" class="text-slate-600 dark:text-slate-300 leading-relaxed"></div>
         </div>
     </div>
-
     <div id="level-up-modal" class="modal-backdrop">
         <div id="level-up-card" class="modal-card text-center">
              <button id="close-level-up-modal-btn" class="absolute top-3 right-3 text-slate-500 hover:text-slate-800 dark:hover:text-white">✕</button>
@@ -125,7 +125,6 @@
             <h3 id="level-up-modal-title" class="text-3xl font-bold my-1">Apprentice</h3>
         </div>
     </div>
-
     <div id="my-list-modal" class="modal-backdrop">
         <div class="modal-card flex flex-col max-h-[80vh]">
             <div class="flex justify-between items-center mb-4">
@@ -137,7 +136,6 @@
             <button id="close-my-list-modal-btn" class="mt-6 w-full bg-slate-200 dark:bg-slate-700 py-2 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors">Fechar</button>
         </div>
     </div>
-    
     <div id="word-details-modal" class="modal-backdrop">
       <div class="modal-card relative">
         <button id="close-modal-btn" class="absolute top-3 right-3 text-slate-500 hover:text-slate-800 dark:hover:text-white transition-colors">✕</button>
@@ -151,7 +149,6 @@
         </div>
       </div>
     </div>
-    
     <div id="confirm-modal" class="modal-backdrop">
       <div class="modal-card text-center">
         <h3 class="text-lg font-bold mb-2">Tem a certeza?</h3>
@@ -162,7 +159,6 @@
         </div>
       </div>
     </div>
-
     <div id="achievement-modal" class="modal-backdrop">
         <div id="achievement-card" class="modal-card text-center relative">
             <button id="close-achievement-modal-btn" class="absolute top-3 right-3 text-slate-500 hover:text-slate-800 dark:hover:text-white">✕</button>
@@ -171,7 +167,6 @@
             <p id="achievement-modal-text" class="text-xl font-semibold mt-1"></p>
         </div>
     </div>
-
     <div id="stats-modal" class="modal-backdrop">
         <div class="modal-card max-w-3xl w-full">
             <div class="flex justify-between items-center mb-4">
@@ -203,7 +198,6 @@
             </div>
         </div>
     </div>
-
     <div id="stories-modal" class="modal-backdrop">
         <div class="modal-card max-w-2xl w-full">
             <div class="flex justify-between items-center mb-4">
@@ -213,7 +207,6 @@
             <div id="stories-container" class="space-y-4 max-h-[60vh] overflow-y-auto pr-2"></div>
         </div>
     </div>
-    
     <div id="settings-modal" class="modal-backdrop">
         <div class="modal-card">
             <div class="flex justify-between items-center mb-6">
@@ -233,7 +226,6 @@
             <button id="save-settings-btn" class="mt-8 w-full bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors">Guardar Alterações</button>
         </div>
     </div>
-
     <div id="share-card-container" class="fixed top-0 -left-[9999px] p-8">
         <div id="share-card" class="w-[400px] h-[711px] p-8 rounded-2xl shadow-2xl flex flex-col font-sans">
             <div class="flex justify-between items-center text-white">

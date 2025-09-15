@@ -23,50 +23,26 @@ document.addEventListener('DOMContentLoaded', () => {
     let categoryChartInstance = null;
     let modalOrigin = null;
     let geminiResponseCache = {};
-    let currentOnboardingStep = 0;
 
     // =================================================================================
     // DADOS CONSTANTES
     // =================================================================================
 
-    const onboardingSteps = [
-        {
-            title: 'Bem-vindo(a) ao VOCA!',
-            text: 'Aprenda e domine o vocabulário em inglês de forma divertida. Vamos mostrar-lhe como funciona em 4 passos rápidos.',
-            highlightTarget: null
-        },
-        {
-            title: 'Conhece a Palavra?',
-            text: "Ao iniciar, verá uma palavra. Se a conhecer, clique em 'Sim, conheço' para a adicionar à sua coleção.",
-            highlightTarget: 'challenge-buttons'
-        },
-        {
-            title: 'A Ajuda da IA!',
-            text: "Se não conhecer a palavra, não se preocupe! Clique em 'Não conheço' e a nossa IA irá dar-lhe uma explicação completa, com exemplos e dicas.",
-            highlightTarget: 'challenge-buttons'
-        },
-        {
-            title: 'Acompanhe o Seu Progresso',
-            text: 'Veja o seu vocabulário crescer, suba de nível e desbloqueie conquistas aqui. Está pronto?',
-            highlightTarget: 'word-count'
-        }
+    const levels = [
+        { name: 'Explorador Iniciante 🧭', threshold: 0 },
+        { name: 'Trilheiro de Frases 🗺️', threshold: 50 },
+        { name: 'Navegador de Conversas ⛵️', threshold: 150 },
+        { name: 'Arquiteto de Ideias 🏗️', threshold: 300 },
+        { name: 'Mestre de Diálogos 🏛️', threshold: 500 },
+        { name: 'Orador Eloquente 🎙️', threshold: 1000 },
+        { name: 'Erudito Cultural 🌍', threshold: 1500 },
+        { name: 'Estrategista de Debates ⚖️', threshold: 2000 },
+        { name: 'Virtuoso Verbal ✒️', threshold: 2500 },
+        { name: 'Titã do Vocabulário ✨', threshold: 3000 },
+        { name: 'Oráculo da Linguagem 🔮', threshold: 3500 },
+        { name: 'Lenda Viva 🏆', threshold: 4000 }
     ];
 
-    const levels = [
-        { name: 'Novice', threshold: 0, icon: '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-graduation-cap"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>' },
-        { name: 'Apprentice', threshold: 50, icon: '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-scroll-text"><path d="M8 21h12a2 2 0 0 0 2-2v-2H10v2a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v3h10v10a2 2 0 0 0 2 2Z"/><path d="M16 17H8"/><path d="M16 13H8"/><path d="M10 9H8"/></svg>' },
-        { name: 'Adept', threshold: 150, icon: '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-marked"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/><path d="m16 2-5 5 5 5"/></svg>' },
-        { name: 'Expert', threshold: 300, icon: '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-check"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>' },
-        { name: 'Master', threshold: 500, icon: '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-medal"><path d="M7.21 15 2.66 7.14a2 2 0 0 1 .13-2.2L4.4 2.8A2 2 0 0 1 6 2h12a2 2 0 0 1 1.6.8l1.6 2.14a2 2 0 0 1 .14 2.2L16.79 15"/><path d="M11 12 5.12 5.9"/><path d="m13 12 5.88-6.1"/><path d="M8 7h8"/><circle cx="12" cy="17" r="5"/><path d="m12 18-1.5-1 3-2 1.5 1-3 2z"/></svg>' },
-        { name: 'Grandmaster', threshold: 1000, icon: '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trophy"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.87 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.13 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>' },
-    ];
-    const achievements = [
-        { id: '10_words', threshold: 10, text: 'Primeiras 10 palavras!', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>' },
-        { id: '25_words', threshold: 25, text: 'Impressionante! 25 palavras.', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-award"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>' },
-        { id: '50_words', threshold: 50, text: 'Meio caminho para 100!', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rocket"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.3.05-3.05A4 4 0 0 0 4.5 16.5Z"/><path d="M12 12c3 3 5 5 5 5s2-2 2-5-2-5-5-5-5 2-5 5z"/><path d="M12 12V2.5c0-1.4-1.1-2.5-2.5-2.5-1.4 0-2.5 1.1-2.5 2.5V12"/><path d="m16.5 19-3-3"/><path d="m21.5 14-3-3"/></svg>' },
-        { id: '100_words', threshold: 100, text: 'Centurião do Vocabulário!', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-gem"><path d="M6 3h12l4 6-10 13L2 9Z"/><path d="M12 22V9"/><path d="m3.5 8.5 17 0"/></svg>' },
-        { id: '200_words', threshold: 200, text: 'Duzentas palavras dominadas!', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-crown"><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7z"/><path d="M12 20v2"/></svg>' },
-    ];
     const stories = [
         { id: 'story_1', title: 'A Quick Meal 🥪', unlockThreshold: 10, text: "A **man** is hungry. He wants to **eat** some **food**. He has **bread** and drinks **water**. It is a **good** and simple meal." },
         { id: 'story_2', title: 'A Trip to the City 🚗', unlockThreshold: 25, text: "We **go** to the **city** in a **car**. We **see** many **people**. It is a busy **day**." },
@@ -82,11 +58,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const elements = {
         themeToggle: $('theme-toggle'), themeIconLight: $('theme-icon-light'), themeIconDark: $('theme-icon-dark'),
         wordCountEl: $('word-count'), levelTitleEl: $('level-title'), streakCountEl: $('streak-count'),
+        xpBarFill: $('xp-bar-fill'), xpBarText: $('xp-bar-text'),
+        challengeCard: $('challenge-card'),
         challengeWordContainer: $('challenge-word-container'), challengeWordEl: $('challenge-word'),
-        challengeButtonsContainer: $('challenge-buttons'), startChallengeBtn: $('start-challenge-btn'),
+        challengeButtonsContainer: $('challenge-buttons'), 
         showListBtn: $('show-list-btn'), showStatsBtn: $('show-stats-btn'), showStoriesBtn: $('show-stories-btn'),
         settingsBtn: $('settings-btn'), shareProgressBtn: $('share-progress-btn'),
-        onboardingModal: $('onboarding-modal'), levelUpModal: $('level-up-modal'), myListModal: $('my-list-modal'),
+        levelUpModal: $('level-up-modal'), myListModal: $('my-list-modal'),
         wordDetailsModal: $('word-details-modal'), confirmModal: $('confirm-modal'), achievementModal: $('achievement-modal'),
         statsModal: $('stats-modal'), storiesModal: $('stories-modal'), settingsModal: $('settings-modal'),
         geminiInteractionModal: $('gemini-interaction-modal'),
@@ -126,9 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function $(id) { return document.getElementById(id); }
 
-    function safeOn(el, ev, fn) {
-        if (el) el.addEventListener(ev, fn);
-    }
+    function safeOn(el, ev, fn) { if (el) el.addEventListener(ev, fn); }
 
     function safeParse(key, fallback) {
         try {
@@ -165,41 +141,51 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateUI() {
         const count = vocabulary.length;
         if (elements.wordCountEl) elements.wordCountEl.textContent = count;
-        const currentLevel = levels.slice().reverse().find(l => count >= l.threshold) || levels[0];
-        if (elements.levelTitleEl) elements.levelTitleEl.textContent = currentLevel.name;
-        if(elements.streakCountEl) elements.streakCountEl.textContent = `↑ ${gameState.streak} dia(s) de streak`;
-        checkAchievements(count);
-    }
-    
-    function checkAchievements(count) {
+
         const lastLevel = levels.slice().reverse().find(l => (count - 1) >= l.threshold) || levels[0];
-        const currentLevel = levels.slice().reverse().find(l => count >= l.threshold) || levels[0];
-        if (currentLevel.name !== lastLevel.name && count > 0) {
-            showLevelUpModal(currentLevel.name, currentLevel.icon);
+        let currentLevelIndex = levels.length - 1;
+        while (currentLevelIndex > 0 && count < levels[currentLevelIndex].threshold) {
+            currentLevelIndex--;
         }
-        achievements.forEach(ach => {
-            if (count >= ach.threshold && !gameState.unlockedAchievements.includes(ach.id)) {
-                gameState.unlockedAchievements.push(ach.id);
-                showAchievementModal(ach.text, ach.icon);
-            }
-        });
+        const currentLevel = levels[currentLevelIndex];
+        const nextLevel = levels[currentLevelIndex + 1];
+
+        if (elements.levelTitleEl) elements.levelTitleEl.textContent = currentLevel.name;
+        
+        if (nextLevel) {
+            const prevLevelThreshold = currentLevel.threshold;
+            const nextLevelThreshold = nextLevel.threshold;
+            const progressInLevel = count - prevLevelThreshold;
+            const levelRange = nextLevelThreshold - prevLevelThreshold;
+            const xpPercentage = (progressInLevel / levelRange) * 100;
+            if (elements.xpBarFill) elements.xpBarFill.style.width = `${xpPercentage}%`;
+            if (elements.xpBarText) elements.xpBarText.textContent = `${progressInLevel} / ${levelRange} palavras`;
+        } else {
+            if (elements.xpBarFill) elements.xpBarFill.style.width = '100%';
+            if (elements.xpBarText) elements.xpBarText.textContent = "Jornada Concluída! Lenda!";
+        }
+        
+        if(elements.streakCountEl) elements.streakCountEl.textContent = `↑ ${gameState.streak} dia(s) de streak`;
+
+        if (currentLevel.name !== lastLevel.name && count > 0) {
+            showLevelUpModal(currentLevel.name, "🏆"); // Usando um emoji simples por agora
+        }
     }
     
     function startChallenge() {
         const availableWords = wordsList.filter(wordObj => !vocabulary.includes(wordObj.word.toLowerCase()));
         if (availableWords.length === 0) {
-            elements.challengeWordContainer.innerHTML = '<p class="text-center">Parabéns! Você conhece todas as palavras da lista!</p>';
+            elements.challengeWordContainer.innerHTML = `<p class="text-center text-lg font-semibold">Uau! Você explorou todas as palavras do nosso tesouro!</p>`;
             elements.challengeButtonsContainer.innerHTML = '';
             return;
         }
         currentWordObject = availableWords[Math.floor(Math.random() * availableWords.length)];
-        elements.challengeWordEl.textContent = currentWordObject.word;
-        if (!elements.challengeButtonsContainer.querySelector('#yes-btn')) {
-             elements.challengeButtonsContainer.innerHTML = `
-                <button id="yes-btn" class="flex-1 bg-green-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-600 transition-colors btn-scale">Sim, conheço</button>
-                <button id="no-btn" class="flex-1 bg-red-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-600 transition-colors btn-scale">Não conheço</button>
-            `;
-        }
+        elements.challengeWordContainer.innerHTML = `<p id="challenge-word" class="text-2xl font-bold text-indigo-500 dark:text-indigo-400">${currentWordObject.word}</p>`;
+        elements.challengeWordEl = $('challenge-word');
+        elements.challengeButtonsContainer.innerHTML = `
+            <button id="yes-btn" class="flex-1 bg-green-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-600 transition-colors btn-scale">Já a conheço! 👍</button>
+            <button id="no-btn" class="flex-1 bg-sky-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-sky-600 transition-colors btn-scale">O que significa? 🤔</button>
+        `;
         safeOn($('yes-btn'), 'click', handleYes);
         safeOn($('no-btn'), 'click', handleNo);
     }
@@ -326,10 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
         activeModal = modal;
         modal.classList.add('active');
         gsap.to(modal, { opacity: 1, duration: 0.3 });
-        gsap.fromTo(modal.querySelector('.modal-card'), 
-            { opacity: 0, scale: 0.95 }, 
-            { opacity: 1, scale: 1, duration: 0.3, ease: 'power2.out', onComplete: () => isModalTransitioning = false }
-        );
+        gsap.fromTo(modal.querySelector('.modal-card'), { opacity: 0, scale: 0.95 }, { opacity: 1, scale: 1, duration: 0.3, ease: 'power2.out', onComplete: () => isModalTransitioning = false });
     }
     
     function openCelebrationModal(modal) {
@@ -367,18 +350,9 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         elements.levelUpModalTitle.textContent = levelName;
-        elements.levelUpIcon.innerHTML = `<div class="celebration-icon">${iconSVG}</div>`;
+        // A lógica do ícone SVG pode ser melhorada, mas por agora usamos um emoji
+        elements.levelUpIcon.innerHTML = `<div class="celebration-icon text-5xl">${iconSVG}</div>`;
         openCelebrationModal(elements.levelUpModal);
-    }
-
-    function showAchievementModal(text, iconSVG) {
-        if (activeModal) {
-            setTimeout(() => showAchievementModal(text, iconSVG), 450);
-            return;
-        }
-        elements.achievementModalText.textContent = text;
-        elements.achievementIcon.innerHTML = `<div class="celebration-icon">${iconSVG}</div>`;
-        openCelebrationModal(elements.achievementModal);
     }
 
     function populateAndShowWordList() {
@@ -388,9 +362,7 @@ document.addEventListener('DOMContentLoaded', () => {
             elements.emptyListMsgInModal.classList.remove('hidden');
         } else {
             elements.emptyListMsgInModal.classList.add('hidden');
-            elements.wordListInModal.innerHTML = vocabulary.map(word => 
-                `<li data-word="${word}" class="capitalize p-2 rounded-md cursor-pointer transition-colors hover:bg-slate-200 dark:hover:bg-slate-700">${word}</li>`
-            ).join('');
+            elements.wordListInModal.innerHTML = vocabulary.map(word => `<li data-word="${word}" class="capitalize py-1 px-2 rounded-md cursor-pointer transition-colors hover:bg-slate-200 dark:hover:bg-slate-700">${word}</li>`).join('');
         }
         openModal(elements.myListModal);
     }
@@ -620,75 +592,61 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // =================================================================================
-    // LÓGICA DO ONBOARDING
-    // =================================================================================
+    function startInteractiveOnboarding() {
+        const driver = window.driver.js.driver;
+        const driverObj = driver({
+            showProgress: true,
+            steps: [
+                { 
+                    element: '#challenge-card', 
+                    popover: { 
+                        title: 'Bem-vindo(a) ao VOCA!', 
+                        description: 'Olá, aventureiro! Tudo começa aqui. Vamos descobrir a sua primeira palavra juntos.',
+                    } 
+                },
+                { 
+                    element: '#challenge-buttons', 
+                    popover: { 
+                        title: 'A Decisão é Sua', 
+                        description: 'Uma palavra irá aparecer. Use estes botões para nos dizer se já a conhece ou se quer aprender mais sobre ela com a ajuda da nossa IA.',
+                    } 
+                },
+                { 
+                    element: '#word-count', 
+                    popover: { 
+                        title: 'O Seu Tesouro', 
+                        description: 'Cada palavra que colecionar será adicionada aqui. Veja o seu conhecimento a crescer!',
+                    } 
+                },
+                { 
+                    element: '#show-list-btn', 
+                    popover: { 
+                        title: 'O Seu Diário de Bordo', 
+                        description: 'E aqui fica o seu "diário", com todas as palavras que já descobriu. Pode consultá-lo quando quiser. Agora, a aventura é sua!',
+                        side: "left",
+                        align: 'start'
+                    } 
+                }
+            ],
+            onDestroyed: () => {
+                finishOnboarding();
+            }
+        });
 
-    function updateHighlightBox(elementId) {
-        const overlay = $('highlight-overlay');
-        document.querySelectorAll('.onboarding-highlight').forEach(el => el.classList.remove('onboarding-highlight'));
-        if (!overlay) return;
-
-        if (!elementId) {
-            overlay.classList.remove('active');
-            return;
+        function finishOnboarding() {
+            if (gameState.isFirstVisit) {
+                gameState.isFirstVisit = false;
+                saveData();
+                startChallenge();
+            }
         }
-
-        const targetElement = $(elementId);
-        if (targetElement) {
-            targetElement.classList.add('onboarding-highlight');
-            overlay.classList.add('active');
-        } else {
-            overlay.classList.remove('active');
-        }
-    }
-    
-    function renderOnboardingStep() {
-        const stepData = onboardingSteps[currentOnboardingStep];
-        const stepsContainer = $('onboarding-steps');
-        const dotsContainer = $('onboarding-dots');
-        const prevBtn = $('onboarding-prev');
-        const nextBtn = $('onboarding-next');
-
-        if (!stepsContainer || !dotsContainer || !prevBtn || !nextBtn) return;
-
-        stepsContainer.innerHTML = onboardingSteps.map(step => `
-            <div class="onboarding-step w-full flex-shrink-0">
-                <h3 class="text-2xl font-bold mb-4">${step.title}</h3>
-                <p class="text-slate-600 dark:text-slate-300 mb-6">${step.text}</p>
-            </div>
-        `).join('');
-
-        stepsContainer.style.transform = `translateX(-${currentOnboardingStep * 100}%)`;
-
-        dotsContainer.innerHTML = onboardingSteps.map((_, index) => 
-            `<div class="onboarding-dot ${index === currentOnboardingStep ? 'active' : ''}"></div>`
-        ).join('');
-
-        prevBtn.style.visibility = currentOnboardingStep === 0 ? 'hidden' : 'visible';
-        nextBtn.textContent = (currentOnboardingStep === onboardingSteps.length - 1) ? 'Começar!' : 'Próximo';
         
-        updateHighlightBox(stepData.highlightTarget);
-    }
-
-    function finishOnboarding() {
-        updateHighlightBox(null); // Remove o destaque
-        closeModal(elements.onboardingModal);
-        gameState.isFirstVisit = false;
-        saveData();
+        const startBtn = $('start-challenge-btn');
+        if (startBtn) startBtn.click();
+        
+        driverObj.drive();
     }
     
-    function startOnboarding() {
-        currentOnboardingStep = 0;
-        openModal(elements.onboardingModal);
-        renderOnboardingStep();
-    }
-
-
-    // =================================================================================
-    // INICIALIZAÇÃO DA APLICAÇÃO
-    // =================================================================================
-
     function initializeApp() {
         initTheme();
         updateUI();
@@ -702,9 +660,8 @@ document.addEventListener('DOMContentLoaded', () => {
             delay: 0.2
         });
 
-        // Listeners de eventos
         safeOn(elements.themeToggle, 'click', toggleTheme);
-        safeOn(elements.startChallengeBtn, 'click', startChallenge);
+        safeOn($('start-challenge-btn'), 'click', startChallenge);
         safeOn(elements.showListBtn, 'click', populateAndShowWordList);
         safeOn(elements.showStatsBtn, 'click', showStatsModal);
         safeOn(elements.showStoriesBtn, 'click', populateAndShowStoriesModal);
@@ -728,7 +685,6 @@ document.addEventListener('DOMContentLoaded', () => {
             vocabulary = [];
             vocaEvents = [];
             gameState.streak = 0;
-            gameState.unlockedAchievements = [];
             saveData();
             updateUI();
             closeModal(elements.confirmModal);
@@ -755,31 +711,15 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         safeOn(elements.closeGeminiDetailModalBtn, 'click', () => closeModal(elements.geminiDetailModal));
-
-        // Listeners para o Onboarding
-        const nextBtn = $('onboarding-next');
-        const prevBtn = $('onboarding-prev');
-        safeOn(nextBtn, 'click', () => {
-            if (currentOnboardingStep < onboardingSteps.length - 1) {
-                currentOnboardingStep++;
-                renderOnboardingStep();
-            } else {
-                finishOnboarding();
-            }
-        });
-        safeOn(prevBtn, 'click', () => {
-            if (currentOnboardingStep > 0) {
-                currentOnboardingStep--;
-                renderOnboardingStep();
-            }
-        });
         
         if (gameState.isFirstVisit) {
-            setTimeout(startOnboarding, 500); // Pequeno delay para a animação inicial dos cards terminar
+            setTimeout(startInteractiveOnboarding, 500);
+        } else {
+            const startBtn = $('start-challenge-btn');
+            if (startBtn) startBtn.click();
         }
     }
 
-    // Carregar os dados e depois inicializar a app
     fetch('words.json')
         .then(response => {
             if (!response.ok) {
