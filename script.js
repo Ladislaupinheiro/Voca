@@ -240,7 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     async function getGeminiExplanation(word) {
-        const apiKey = ""; // <-- INSIRA A SUA CHAVE DE API DA GOOGLE AI STUDIO AQUI
+        const apiKey = "AIzaSyAKpm4N8yVqHwjhwdP9AKMJ9U1s2P3cKA8"; // <-- INSIRA A SUA CHAVE DE API DA GOOGLE AI STUDIO AQUI
         if (!apiKey) {
             throw new Error("API Key for Gemini is not set.");
         }
@@ -743,4 +743,5 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
             }
         });
+
 });
